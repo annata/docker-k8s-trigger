@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/client-go/kubernetes"
@@ -11,12 +10,12 @@ import (
 	"time"
 )
 
-func trigger(name string) error {
+func trigger(namespace string, name string) error {
 
-	namespaceByte, err := ioutil.ReadFile("/var/run/secrets/kubernetes.io/serviceaccount/namespace")
-	if err != nil {
-		return err
-	}
+	//namespaceByte, err := ioutil.ReadFile("/var/run/secrets/kubernetes.io/serviceaccount/namespace")
+	//if err != nil {
+	//	return err
+	//}
 	config, err := rest.InClusterConfig()
 	if err != nil {
 		return err
@@ -25,7 +24,7 @@ func trigger(name string) error {
 	if err != nil {
 		return err
 	}
-	_, err = clientset.AppsV1beta1().Deployments(string(namespaceByte)).Patch(context.TODO(),
+	_, err = clientset.AppsV1beta1().Deployments(namespace).Patch(context.TODO(),
 		name, types.JSONPatchType, []byte(fmt.Sprintf("{\"spec\":{\"template\":{\"metadata\":{\"labels\":{\"time\":\"%d\"}}}}}", time.Now().Unix())), v1.PatchOptions{})
 	if err != nil {
 		return err

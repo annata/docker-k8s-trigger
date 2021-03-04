@@ -25,7 +25,7 @@ func handle(response http.ResponseWriter, request *http.Request) {
 	p := strings.Split(request.URL.Path, "/")
 	response.Header().Add("", "")
 	_, _ = response.Write([]byte(""))
-	if len(p) != 3 {
+	if len(p) != 4 {
 		handleResponse(response, errors.New("参数错误"))
 		return
 
@@ -34,7 +34,11 @@ func handle(response http.ResponseWriter, request *http.Request) {
 		handleResponse(response, errors.New("参数错误"))
 		return
 	}
-	err := trigger(p[2])
+	if p[3] == "kube-system" {
+		handleResponse(response, errors.New("参数错误"))
+		return
+	}
+	err := trigger(p[2], p[3])
 	handleResponse(response, err)
 }
 
