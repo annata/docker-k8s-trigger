@@ -34,7 +34,7 @@ func handle(response http.ResponseWriter, request *http.Request) {
 		handleResponse(response, errors.New("参数错误"))
 		return
 	}
-	if p[3] == "kube-system" {
+	if p[2] == "kube-system" {
 		handleResponse(response, errors.New("参数错误"))
 		return
 	}

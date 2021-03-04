@@ -24,7 +24,7 @@ func trigger(namespace string, name string) error {
 	if err != nil {
 		return err
 	}
-	_, err = clientset.AppsV1beta1().Deployments(namespace).Patch(context.TODO(),
+	_, err = clientset.AppsV1().Deployments(namespace).Patch(context.TODO(),
 		name, types.StrategicMergePatchType, []byte(fmt.Sprintf("{\"spec\":{\"template\":{\"metadata\":{\"labels\":{\"time\":\"%d\"}}}}}", time.Now().Unix())), v1.PatchOptions{})
 	if err != nil {
 		return err
