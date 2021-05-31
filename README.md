@@ -6,5 +6,5 @@
 ## 用法
 - 最简单的通过命令 `kubectl apply -f k8s-trigger.yml` 即可一键部署
 - 通过名称 `kubectl get svc -n k8s-trigger` 即可查看部署的elb的url
-- 通过 `http://{elb的url}/{secret}/{命名空间}/{deploy名称即可重新部署deploy}`
+- 通过 `http://{elb的url}/{secret}/{命名空间}/{deploy名称}即可重新部署deploy`
 - 默认secret在main.go中,部署时可通过环境变量secret修改
