@@ -1,4 +1,4 @@
-FROM golang:1.15-alpine as builder
+FROM golang:alpine as builder
 WORKDIR /k8s-trigger
 COPY . .
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build
