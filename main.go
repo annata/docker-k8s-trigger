@@ -25,10 +25,9 @@ func handle(response http.ResponseWriter, request *http.Request) {
 	p := strings.Split(request.URL.Path, "/")
 	response.Header().Add("", "")
 	_, _ = response.Write([]byte(""))
-	if len(p) != 4 {
+	if len(p) != 4 && len(p) != 6 {
 		handleResponse(response, errors.New("参数错误"))
 		return
-
 	}
 	if p[1] != secret {
 		handleResponse(response, errors.New("参数错误"))
@@ -38,8 +37,13 @@ func handle(response http.ResponseWriter, request *http.Request) {
 		handleResponse(response, errors.New("参数错误"))
 		return
 	}
-	err := trigger(p[2], p[3])
-	handleResponse(response, err)
+	if len(p) == 6 {
+		err := triggerVersion(p[2], p[3], p[4], p[5])
+		handleResponse(response, err)
+	} else {
+		err := trigger(p[2], p[3])
+		handleResponse(response, err)
+	}
 }
 
 func handleResponse(response http.ResponseWriter, err error) {

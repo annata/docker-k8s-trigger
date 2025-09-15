@@ -45,6 +45,9 @@ spec:
       containers:
       - name: trigger
         image: annat/k8s-trigger
+        env:
+          - name: secret
+            value: "6FGS959U9epLIJ6crvu4l2TsdpD4Ozyz2M7JEravear"
         imagePullPolicy: Always
 ---
 apiVersion: v1
