@@ -8,3 +8,4 @@
 - 通过名称 `kubectl get svc -n k8s-trigger` 即可查看部署的elb的url
 - 通过 `http://{elb的url}/{secret}/{命名空间}/{deploy名称}即可重新部署deploy`
 - 默认secret在main.go中,部署时可通过环境变量secret修改
+- 新功能: 旧用法仍然支持,新用法: `http://{elb的url}/{secret}/{命名空间}/{deploy名称}/{container名称}/{tag}`,可以直接更新容器tag,tag只允许[a-z|A-Z|0-9|.]
