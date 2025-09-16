@@ -2,12 +2,14 @@ package main
 
 import (
 	"errors"
+	"log"
 	"net/http"
 	"os"
 	"strings"
 )
 
 var secret = "6FGS959U9epLIJ6crvu4l2TsdpD4Ozyz2M7JEravear"
+var logger = log.New(os.Stdout, "[k8s_trigger]", log.Ldate|log.Ltime)
 
 func main() {
 	secretStr := os.Getenv("secret")
@@ -38,9 +40,11 @@ func handle(response http.ResponseWriter, request *http.Request) {
 		return
 	}
 	if len(p) == 6 {
+		logger.Printf("triggerVersion,namespace: %s, name: %s, container: %s, tag: %s", p[2], p[3], p[4], p[5])
 		err := triggerVersion(p[2], p[3], p[4], p[5])
 		handleResponse(response, err)
 	} else {
+		logger.Printf("trigger,namespace: %s, name: %s", p[2], p[3])
 		err := trigger(p[2], p[3])
 		handleResponse(response, err)
 	}
