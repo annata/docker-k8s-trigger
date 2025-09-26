@@ -31,7 +31,7 @@ func trigger(namespace string, name string) error {
 	return nil
 }
 
-var tagRegexp = regexp.MustCompile(`^[a-z|A-Z0-9.]+$`)
+var tagRegexp = regexp.MustCompile(`^[a-z|A-Z0-9._]+$`)
 
 func triggerVersion(namespace string, name string, containerName string, tag string) error {
 	if !tagRegexp.MatchString(tag) {
