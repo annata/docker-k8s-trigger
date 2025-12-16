@@ -64,3 +64,52 @@ func triggerVersion(namespace string, name string, containerName string, tag str
 	}
 	return nil
 }
+
+func triggerStatefulSet(namespace string, name string) error {
+	config, err := rest.InClusterConfig()
+	if err != nil {
+		return err
+	}
+	clientset, err := kubernetes.NewForConfig(config)
+	if err != nil {
+		return err
+	}
+	_, err = clientset.AppsV1().StatefulSets(namespace).Patch(context.TODO(),
+		name, types.StrategicMergePatchType, []byte(fmt.Sprintf("{\"spec\":{\"template\":{\"metadata\":{\"labels\":{\"time\":\"%d\"}}}}}", time.Now().Unix())), v1.PatchOptions{})
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func triggerVersionStatefulSet(namespace string, name string, containerName string, tag string) error {
+	if !tagRegexp.MatchString(tag) {
+		return fmt.Errorf("invalid tag format: %s", tag)
+	}
+	config, err := rest.InClusterConfig()
+	if err != nil {
+		return err
+	}
+	clientset, err := kubernetes.NewForConfig(config)
+	if err != nil {
+		return err
+	}
+	deployment, err := clientset.AppsV1().StatefulSets(namespace).Get(context.TODO(), name, v1.GetOptions{})
+	if err != nil {
+		return err
+	}
+	for i, container := range deployment.Spec.Template.Spec.Containers {
+		if container.Name == containerName {
+			parts := strings.SplitN(container.Image, ":", 2)
+			baseImage := parts[0]
+			deployment.Spec.Template.Spec.Containers[i].Image = baseImage + ":" + tag
+			break
+		}
+	}
+	deployment.Spec.Template.Labels["time"] = strconv.FormatInt(time.Now().Unix(), 10)
+	_, err = clientset.AppsV1().StatefulSets(namespace).Update(context.TODO(), deployment, v1.UpdateOptions{})
+	if err != nil {
+		return err
+	}
+	return nil
+}

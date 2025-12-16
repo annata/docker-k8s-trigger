@@ -39,13 +39,23 @@ func handle(response http.ResponseWriter, request *http.Request) {
 		handleResponse(response, errors.New("参数错误"))
 		return
 	}
+	statefulSet := request.URL.Query().Get("s")
+	var err error
 	if len(p) == 6 {
-		logger.Printf("triggerVersion,namespace: %s, name: %s, container: %s, tag: %s", p[2], p[3], p[4], p[5])
-		err := triggerVersion(p[2], p[3], p[4], p[5])
+		logger.Printf("triggerVersion,statefulSet: %s,namespace: %s, name: %s, container: %s, tag: %s", statefulSet, p[2], p[3], p[4], p[5])
+		if statefulSet == "" {
+			err = triggerVersion(p[2], p[3], p[4], p[5])
+		} else {
+			err = triggerVersionStatefulSet(p[2], p[3], p[4], p[5])
+		}
 		handleResponse(response, err)
 	} else {
-		logger.Printf("trigger,namespace: %s, name: %s", p[2], p[3])
-		err := trigger(p[2], p[3])
+		logger.Printf("trigger,statefulSet: %s,namespace: %s, name: %s", statefulSet, p[2], p[3])
+		if statefulSet == "" {
+			err = trigger(p[2], p[3])
+		} else {
+			err = triggerStatefulSet(p[2], p[3])
+		}
 		handleResponse(response, err)
 	}
 }
